@@ -12,7 +12,8 @@
 
 ## About
 
-Extensions and tools for Unity
+TumBox is a carefully curated collection of extensions and tools designed to enhance your workflow, streamline development processes, and unlock new possibilities within the Unity environment. 
+From time-saving utilities to powerful extensions, TumBox equips developers with a versatile toolkit, making Unity development more efficient and enjoyable. 
 
 **Version**:  1.0.0
 
