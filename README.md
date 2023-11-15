@@ -24,7 +24,7 @@ From time-saving utilities to powerful extensions, TumBox equips developers with
 ## How do I install?
 
 <details>
-<summary>Install via s Package Manager</summary>
+<summary>Install via Package Manager</summary>
 
 1. Open Package Manager window (Window | Package Manager)
 1. Click `+` button on the upper-left of a window, and select "Add package from git URL..."
@@ -33,8 +33,6 @@ From time-saving utilities to powerful extensions, TumBox equips developers with
 ```
 https://github.com/Tomek09/TumBox.git?path=/TumBox
 ```
-
-> **_NOTE:_** To install a concrete version you can specify the version by prepending #v{version} e.g. `#v2.0.0`. For more see [Unity UPM Documentation](https://docs.unity3d.com/Manual/upm-git.html).
 </details>
 
 <details>
