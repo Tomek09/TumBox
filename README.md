@@ -1,7 +1,7 @@
 <h1 align="center">TumBox</h1>
 
 <p align="center">
-  <img src="logo.png" width="64">
+  <img src="Editor\Icons\logo.png" width="64">
 </p>
 
 <p align="center">
