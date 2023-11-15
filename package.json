@@ -1,0 +1,16 @@
+{
+  "name": "com.atom3y.tumbox",
+  "version": "1.0.0",
+  "displayName": "Tum Box",
+  "description": "Unity Editor extension",
+  "keywords": [
+    "extension",
+    "tools",
+    "unity",
+    "editor"
+  ],
+  "author": {
+    "name": "Tomek Kierpiec",
+    "email": "kierpiec.tomek@gmail.com"
+  }
+}
