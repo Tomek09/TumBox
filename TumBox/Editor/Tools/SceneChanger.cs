@@ -41,7 +41,6 @@ namespace TumBox.Tools {
 		}
 
 		private void OnEnable() {
-			FillStyles();
 			FillSceneData();
 		}
 
@@ -55,7 +54,7 @@ namespace TumBox.Tools {
 		private void DrawHeader() {
 			Extensions.EditorExtensions.Horizontal(() => {
 				GUILayout.FlexibleSpace();
-				GUILayout.Label(Extensions.IconExtensions.GetLogo("Scene Changer"), _headerStyle, GUILayout.Height(HeaderHeight));
+				GUILayout.Label(Extensions.IconExtensions.GetLogo("Scene Changer"), GetHeader(), GUILayout.Height(HeaderHeight));
 				GUILayout.FlexibleSpace();
 			}, "Box");
 		}
@@ -75,16 +74,6 @@ namespace TumBox.Tools {
 					DrawScene(_sceneDatas[i]);
 				}
 			}, GUIStyle.none, ref _scenesScroll);
-		}
-
-
-		private void FillStyles() {
-			// Navigation
-			_headerStyle = Extensions.EditorExtensions.BoldLabelStyle(15, TextAnchor.MiddleCenter);
-
-			// Scenes
-			_sceneNameStyle = Extensions.EditorExtensions.BoldLabelStyle(12, TextAnchor.MiddleLeft);
-			_scenePathStyle = Extensions.EditorExtensions.LabelStyle(8, TextAnchor.MiddleLeft);
 		}
 
 		private void FillSceneData() {
@@ -108,16 +97,16 @@ namespace TumBox.Tools {
 		private void DrawScene(SceneData sceneData) {
 			Extensions.EditorExtensions.Horizontal(() => {
 				Extensions.EditorExtensions.Vertical(() => {
-					GUILayout.Label(sceneData.Name, _sceneNameStyle);
-					GUILayout.Label(sceneData.Path, _scenePathStyle);
+					GUILayout.Label(sceneData.Name, GetSceneName());
+					GUILayout.Label(sceneData.Path, GetScenePath());
 				}, GUIStyle.none, GUILayout.ExpandWidth(true));
 
 
 				GUILayout.FlexibleSpace();
 
 				Extensions.EditorExtensions.Horizontal(() => {
-					DrawButton(Extensions.IconExtensions.GetHome(), () => ChangeScene(sceneData.Path), SceneHeight, SceneHeight);
-					DrawButton(Extensions.IconExtensions.GetBookClosed(), () => PingScene(sceneData.Path), SceneHeight, SceneHeight);
+					DrawButton(Extensions.IconExtensions.GetHome(string.Empty, "Change Scene"), () => ChangeScene(sceneData.Path), SceneHeight, SceneHeight);
+					DrawButton(Extensions.IconExtensions.GetBookClosed(string.Empty, "Ping Scene"), () => PingScene(sceneData.Path), SceneHeight, SceneHeight);
 				}, GUIStyle.none);
 			}, "Box", GUILayout.ExpandWidth(true), GUILayout.Height(SceneHeight));
 		}
@@ -134,16 +123,8 @@ namespace TumBox.Tools {
 
 
 		#region Buttons
-		private void DrawButton(GUIContent content, System.Action action) {
-			DrawButton(content, action, ButtonWidth, ButtonHeight);
-		}
-
 		private void DrawButton(string text, System.Action action) {
 			DrawButton(new GUIContent(text), action, ButtonWidth, ButtonHeight);
-		}
-
-		private void DrawButton(string text, System.Action action, float width, float height) {
-			DrawButton(new GUIContent(text), action, width, height);
 		}
 
 		private void DrawButton(GUIContent content, System.Action action, float width, float height) {
@@ -151,6 +132,23 @@ namespace TumBox.Tools {
 				action?.Invoke();
 			}
 		}
+		#endregion
+
+		#region Styles
+
+		private GUIStyle GetHeader() => GetStyle(ref _headerStyle, Extensions.EditorExtensions.BoldLabelStyle(15, TextAnchor.MiddleCenter));
+
+		private GUIStyle GetSceneName() => GetStyle(ref _sceneNameStyle, Extensions.EditorExtensions.BoldLabelStyle(12, TextAnchor.MiddleLeft));
+
+		private GUIStyle GetScenePath() => GetStyle(ref _scenePathStyle, Extensions.EditorExtensions.LabelStyle(8, TextAnchor.MiddleLeft));
+
+		private GUIStyle GetStyle(ref GUIStyle style, GUIStyle defaultStyle) {
+			if (style == null) {
+				style = defaultStyle;
+			}
+			return style;
+		}
+
 		#endregion
 	}
 }

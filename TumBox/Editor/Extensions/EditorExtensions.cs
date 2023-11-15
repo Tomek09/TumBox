@@ -48,10 +48,10 @@ namespace TumBox.Extensions {
 			return LabelStyle(EditorStyles.boldLabel, fontSize, alignment);
 		}
 
-		private static GUIStyle LabelStyle(GUIStyle style, int fontSize, TextAnchor alignment) {
+		public static GUIStyle LabelStyle(GUIStyle style, int fontSize, TextAnchor alignment) {
 			GUIStyle drawStyle = new GUIStyle(style) {
 				fontSize = fontSize,
-				alignment = alignment,
+				alignment = alignment
 			};
 			return drawStyle;
 		}
