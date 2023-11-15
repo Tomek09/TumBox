@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace TumBox.Utilities {
-	public class GlobalSceneInitializer {
+	public class GlobalObjectInitializer {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void OnBeforeSceneLoadRuntimeMethod() {
             Object globalPrefab = Resources.Load("_Global");
