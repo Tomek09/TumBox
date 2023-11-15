@@ -8,7 +8,7 @@
   <a href="#about">About</a> &bull;
   <a href="#How-do-I-install">Install</a> &bull;
   <a href="#releases">Releases</a> &bull;
-  <a href="#Special-Thanks">Special Thanks</a> &bull;
+  <a href="#Special-thanks">Special Thanks</a> &bull;
   <a href="#Support">Support</a> &bull;
 </p>
 
@@ -54,7 +54,7 @@ https://github.com/Tomek09/TumBox.git?path=/TumBox
 # Releases
 - [v1.0.0](https://www.google.pl/)
 
-## Special Thanks
+## Special thanks
 - [Kenney](https://www.kenney.nl/) for lovely icons. 
 
 ## Support
