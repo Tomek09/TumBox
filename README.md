@@ -7,6 +7,7 @@
 <p align="center">
   <a href="#about">About</a> &bull;
   <a href="#releases">Releases</a> &bull;
+  <a href="#Special-Thanks">Special Thanks</a> &bull;
   <a href="#Support">Support</a> &bull;
 </p>
 
@@ -21,6 +22,9 @@ From time-saving utilities to powerful extensions, TumBox equips developers with
 
 # Releases
 - [v1.0.0](https://www.google.pl/)
+
+## Special Thanks
+- [Kenney](https://www.kenney.nl/) for lovely icons. 
 
 ## Support
 Need help?  Found a bug?
