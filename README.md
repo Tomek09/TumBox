@@ -9,12 +9,12 @@
   <a href="#How-do-I-install">Install</a> &bull;
   <a href="#releases">Releases</a> &bull;
   <a href="#Special-thanks">Special Thanks</a> &bull;
-  <a href="#Support">Support</a> &bull;
+  <a href="#Support">Support</a>;
 </p>
 
 ## About
 
-TumBox is a carefully curated collection of extensions and tools designed to enhance your workflow, streamline development processes, and unlock new possibilities within the Unity environment. 
+Tum Box is a carefully curated collection of extensions and tools designed to enhance your workflow, streamline development processes, and unlock new possibilities within the Unity environment. 
 From time-saving utilities to powerful extensions, TumBox equips developers with a versatile toolkit, making Unity development more efficient and enjoyable. 
 
 **Version**:  1.0.0
