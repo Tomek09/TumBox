@@ -9,7 +9,7 @@
   <a href="#How-do-I-install">Install</a> &bull;
   <a href="#releases">Releases</a> &bull;
   <a href="#Special-thanks">Special Thanks</a> &bull;
-  <a href="#Support">Support</a>;
+  <a href="#Support">Support</a>
 </p>
 
 ## About
