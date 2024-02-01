@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -78,19 +80,25 @@ namespace TumBox.Tools {
 
 		private void FillSceneData() {
 			string[] guids = AssetDatabase.FindAssets("t: Scene");
-			_totalScenes = guids.Length;
-			_sceneDatas = new SceneData[_totalScenes];
+			int totalFoundGuids = guids.Length;
+			List<SceneData> newScenes = new List<SceneData>();
 
-			for (int i = 0; i < _totalScenes; i++) {
+			for (int i = 0; i < totalFoundGuids; i++) {
 				string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+				if (path.StartsWith("Packages/")) {
+					continue;
+				}
+
 				SceneAsset asset = AssetDatabase.LoadAssetAtPath(path, typeof(SceneAsset)) as SceneAsset;
 
-				_sceneDatas[i] = new SceneData() {
+				newScenes.Add(new SceneData() {
 					Name = asset.name,
 					Path = path
-				};
+				});
 			}
 
+			_totalScenes = newScenes.Count;
+			_sceneDatas = newScenes.ToArray();
 		}
 
 
