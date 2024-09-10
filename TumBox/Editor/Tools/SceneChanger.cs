@@ -1,162 +1,176 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
+using TumBox.Extensions;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace TumBox.Tools {
-	public class SceneChanger : EditorWindow {
-
-		#region Classes
-		private class SceneData {
-			public string Name;
-			public string Path;
+namespace TumBox.Tools
+{
+	public class SceneChanger : EditorWindowUtility
+	{
+		private class SceneData
+		{
+			public string name;
+			public string path;
+			public string guid;
+			public int buildIndex;
 		}
-		#endregion
 
-		#region GUI
-		private const float HeaderHeight = 50f;
-		private const float NavigationHeight = 20f;
-		private const float SceneHeight = 30f;
+		private const float SCENE_HEIGHT = 30f;
 
-		private const float ButtonWidth = 100f;
-		private const float ButtonHeight = 20f;
-		#endregion
-
-		#region Styles
-		private GUIStyle _headerStyle;
-		private GUIStyle _sceneNameStyle;
-		private GUIStyle _scenePathStyle;
-		#endregion
-
-		#region Scenes
-		private SceneData[] _sceneDatas;
+		private List<SceneData> _scenesData;
 		private int _totalScenes;
-		private Vector2 _scenesScroll;
-		#endregion
+		private Vector2 _scenesScrollView;
 
 		[MenuItem("TumBox/Scene Changer")]
-		public static void ShowWindow() {
-			SceneChanger editor = (SceneChanger)GetWindow(typeof(SceneChanger));
-			editor.titleContent = Extensions.IconExtensions.GetLogo("Scene Changer");
+		public static void ShowWindow()
+		{
+			SceneChanger editor = (SceneChanger)EditorWindow.GetWindow(typeof(SceneChanger));
+			editor.titleContent = new GUIContent("Scene Changer");
+			editor.SetupSceneData();
 		}
 
-		private void OnEnable() {
-			FillSceneData();
+		private void OnEnable()
+		{
+			SetupSceneData();
 		}
 
-		private void OnGUI() {
-			DrawHeader();
-			DrawNavigation();
+		private void OnGUI()
+		{
+			DrawTools();
 			DrawScenes();
 		}
 
-
-		private void DrawHeader() {
-			Extensions.EditorExtensions.Horizontal(() => {
-				GUILayout.FlexibleSpace();
-				GUILayout.Label(Extensions.IconExtensions.GetLogo("Scene Changer"), GetHeader(), GUILayout.Height(HeaderHeight));
-				GUILayout.FlexibleSpace();
-			}, "Box");
-		}
-
-		private void DrawNavigation() {
-			Extensions.EditorExtensions.Horizontal(() => {
-				GUILayout.FlexibleSpace();
-				DrawButton("Refresh", FillSceneData);
-				GUILayout.FlexibleSpace();
-			}, "Box", GUILayout.ExpandWidth(true), GUILayout.Height(NavigationHeight));
-		}
-
-
-		private void DrawScenes() {
-			Extensions.EditorExtensions.VerticalScrollView(() => {
-				for (int i = 0; i < _totalScenes; i++) {
-					DrawScene(_sceneDatas[i]);
-				}
-			}, GUIStyle.none, ref _scenesScroll);
-		}
-
-		private void FillSceneData() {
+		private void SetupSceneData()
+		{
 			string[] guids = AssetDatabase.FindAssets("t: Scene");
-			int totalFoundGuids = guids.Length;
-			List<SceneData> newScenes = new List<SceneData>();
+			_scenesData = new();
 
-			for (int i = 0; i < totalFoundGuids; i++) {
+			for (int i = 0; i < guids.Length; i++)
+			{
 				string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-				if (path.StartsWith("Packages/")) {
+				if (!path.StartsWith("Assets"))
 					continue;
-				}
 
 				SceneAsset asset = AssetDatabase.LoadAssetAtPath(path, typeof(SceneAsset)) as SceneAsset;
+				string name = asset.name;
 
-				newScenes.Add(new SceneData() {
-					Name = asset.name,
-					Path = path
-				});
+				SceneData sceneData = new SceneData()
+				{
+					path = path,
+					name = name,
+					guid = guids[i],
+					buildIndex = GetBuildIndex(path)
+				};
+
+				_scenesData.Add(sceneData);
 			}
-
-			_totalScenes = newScenes.Count;
-			_sceneDatas = newScenes.ToArray();
+			_totalScenes = _scenesData.Count;
 		}
 
+		private int GetBuildIndex(string path)
+		{
+			EditorBuildSettingsScene[] settings = EditorBuildSettings.scenes;
+			int totalSettings = settings.Length;
+			for (int i = 0; i < totalSettings; i++)
+			{
+				if (string.Equals(path, settings[i].path))
+				{
+					return i;
+				}
+			}
 
-		private void DrawScene(SceneData sceneData) {
-			Extensions.EditorExtensions.Horizontal(() => {
-				Extensions.EditorExtensions.Vertical(() => {
-					GUILayout.Label(sceneData.Name, GetSceneName());
-					GUILayout.Label(sceneData.Path, GetScenePath());
-				}, GUIStyle.none, GUILayout.ExpandWidth(true));
+			return -1;
+		}
 
+		private void DrawTools()
+		{
+			EditorExtensions.Horizontal(() =>
+			{
+				IconLabel(IconExtensions.Logo(), EditorStyles.label, 12, GUILayout.Width(30), GUILayout.Height(30));
+				SmallButtonIcon("d_RotateTool@2x", "Refresh", OnRefreshScenes);
+			}, "box", false, GUILayout.ExpandWidth(true), GUILayout.Height(30));
+		}
+
+		private void DrawScenes()
+		{
+			GUILayout.BeginVertical("Box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+			_scenesScrollView = GUILayout.BeginScrollView(_scenesScrollView);
+			for (int i = 0; i < _totalScenes; i++)
+			{
+				DrawScene(_scenesData[i]);
+			}
+			GUILayout.EndScrollView();
+			GUILayout.EndVertical();
+		}
+
+		private void DrawScene(SceneData scene)
+		{
+			bool buildNotIncluded = Equals(scene.buildIndex, -1);
+
+			EditorExtensions.Horizontal(() => {
+				EditorExtensions.Vertical(() => {
+					Label(scene.name, EditorStyles.boldLabel, 15);
+					Label(scene.path, EditorStyles.label, 10);
+					Label(string.Format("Build included: {0}", buildNotIncluded ? "False" : "True"), EditorStyles.label, 8);
+				}, GUIStyle.none, false, GUILayout.Width(100));
 
 				GUILayout.FlexibleSpace();
 
-				Extensions.EditorExtensions.Horizontal(() => {
-					DrawButton(Extensions.IconExtensions.GetHome(string.Empty, "Change Scene"), () => ChangeScene(sceneData.Path), SceneHeight, SceneHeight);
-					DrawButton(Extensions.IconExtensions.GetBookClosed(string.Empty, "Ping Scene"), () => PingScene(sceneData.Path), SceneHeight, SceneHeight);
-				}, GUIStyle.none);
-			}, "Box", GUILayout.ExpandWidth(true), GUILayout.Height(SceneHeight));
+				EditorExtensions.Vertical(() => {
+					EditorExtensions.Horizontal(() => {
+						SmallButtonIcon("d_Spotlight Icon", "Find scene asset", () => OnPingScene(scene.path));
+						SmallButtonIcon(buildNotIncluded ? "d_Invalid@2x" : "d_GreenCheckmark@2x", "Build included", () => OnModifyBuild(scene.path, buildNotIncluded));
+						SmallButtonIcon(IconExtensions.Home("", "Open scene"), () => OnChangeScene(scene.path));
+					}, GUIStyle.none, false, GUILayout.ExpandWidth(true));
+				}, GUIStyle.none, false);
+
+			}, "Box", false, GUILayout.Height(SCENE_HEIGHT));
 		}
 
-		private void ChangeScene(string path) {
-			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
+		private void OnRefreshScenes()
+		{
+			SetupSceneData();
+		}
+
+
+		private void OnPingScene(string path)
+		{
+			var scene = AssetDatabase.LoadMainAssetAtPath(path);
+			EditorGUIUtility.PingObject(scene);
+		}
+
+		private void OnModifyBuild(string path, bool isNotIncluded)
+		{
+			List<EditorBuildSettingsScene> settings = EditorBuildSettings.scenes.ToList();
+			int total = settings.Count;
+			if (isNotIncluded)
+			{
+				settings.Add(new EditorBuildSettingsScene(path, true));
+			}
+			else
+			{
+				for (int i = 0; i < total; i++)
+				{
+					if (string.Equals(settings[i].path, path))
+					{
+						settings.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			EditorBuildSettings.scenes = settings.ToArray();
+			SetupSceneData();
+		}
+
+		private void OnChangeScene(string path)
+		{
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+			{
 				EditorSceneManager.OpenScene(path);
 			}
 		}
-
-		private void PingScene(string path) {
-			EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(path));
-		}
-
-
-		#region Buttons
-		private void DrawButton(string text, System.Action action) {
-			DrawButton(new GUIContent(text), action, ButtonWidth, ButtonHeight);
-		}
-
-		private void DrawButton(GUIContent content, System.Action action, float width, float height) {
-			if (GUILayout.Button(content, GUILayout.Width(width), GUILayout.Height(height))) {
-				action?.Invoke();
-			}
-		}
-		#endregion
-
-		#region Styles
-
-		private GUIStyle GetHeader() => GetStyle(ref _headerStyle, Extensions.EditorExtensions.BoldLabelStyle(15, TextAnchor.MiddleCenter));
-
-		private GUIStyle GetSceneName() => GetStyle(ref _sceneNameStyle, Extensions.EditorExtensions.BoldLabelStyle(12, TextAnchor.MiddleLeft));
-
-		private GUIStyle GetScenePath() => GetStyle(ref _scenePathStyle, Extensions.EditorExtensions.LabelStyle(8, TextAnchor.MiddleLeft));
-
-		private GUIStyle GetStyle(ref GUIStyle style, GUIStyle defaultStyle) {
-			if (style == null) {
-				style = defaultStyle;
-			}
-			return style;
-		}
-
-		#endregion
 	}
 }
