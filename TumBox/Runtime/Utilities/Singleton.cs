@@ -1,45 +1,41 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace TumBox.Utilities
 {
-	public class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
-		private static T _instance;
+	public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+	{
 
-		public static T Instance
+		private static T _instance = null;
+
+		static public T instance
 		{
 			get
 			{
 				if (_instance == null)
 				{
-					GameObject obj = new GameObject
+					T[] array = Resources.FindObjectsOfTypeAll<T>();
+					for (int a = 0; a < array.Length; a++)
 					{
-						name = typeof(T).Name,
-						hideFlags = HideFlags.HideAndDontSave
-					};
-
-					_instance = obj.AddComponent<T>();
+						if (array[a].gameObject.scene.name != null)
+						{
+							return _instance = array[a];
+						}
+					}
+					return null;
 				}
-
-				return _instance;
+				else
+				{
+					return _instance;
+				}
 			}
 		}
 
-		protected virtual void Awake()
+		private protected virtual void Awake()
 		{
-			if (_instance == null)
-			{
-				_instance = FindFirstObjectByType<T>();
-			}
-		}
-
-		protected virtual void OnDestroy()
-		{
-			if (_instance == this)
-			{
-				_instance = null;
-			}
+			_instance = this as T;
 		}
 	}
+
 
 	public class SingletonPersistent<T> : MonoBehaviour where T : Component
 	{
