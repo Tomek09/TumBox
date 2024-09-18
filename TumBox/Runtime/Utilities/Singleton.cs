@@ -7,7 +7,7 @@ namespace TumBox.Utilities
 
 		private static T _instance = null;
 
-		static public T instance
+		static public T Instance
 		{
 			get
 			{
@@ -30,7 +30,7 @@ namespace TumBox.Utilities
 			}
 		}
 
-		private protected virtual void Awake()
+		protected virtual void Awake()
 		{
 			_instance = this as T;
 		}
